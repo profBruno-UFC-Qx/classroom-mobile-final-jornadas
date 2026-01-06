@@ -81,7 +81,7 @@ fun MemoryCreation(cancel: () -> Unit, modifier: Modifier = Modifier) {
             value = mock,
             onValueChange = {mock = it},
             label = "Data*",
-            icon = Icons.Default.CalendarToday,
+            /*trailingIcon = Icons.Default.CalendarToday,*/
             modifier = Modifier
         )
 

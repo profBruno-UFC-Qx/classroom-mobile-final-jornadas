@@ -95,7 +95,7 @@ fun RegisterScreen(onRegisterClick: () -> Unit, onLoginClick: () -> Unit, modifi
                     value = mock,
                     onValueChange = { mock = it },
                     label = "Senha*",
-                    icon = Icons.Default.Visibility,
+                    /*trailingIcon = Icons.Default.Visibility,*/
                     modifier = Modifier
                 )
 
@@ -105,7 +105,7 @@ fun RegisterScreen(onRegisterClick: () -> Unit, onLoginClick: () -> Unit, modifi
                     value = mock,
                     onValueChange = { mock = it },
                     label = "Confirmar senha*",
-                    icon = Icons.Default.Visibility,
+                    /*trailingIcon = Icons.Default.Visibility,*/
                     modifier = Modifier
                 )
 
