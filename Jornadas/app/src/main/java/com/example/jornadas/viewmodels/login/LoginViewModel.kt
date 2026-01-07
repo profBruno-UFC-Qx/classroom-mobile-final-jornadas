@@ -1,9 +1,9 @@
 package com.example.jornadas.viewmodels.login
 
 
-import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.jornadas.viewmodels.Validations
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,24 +26,17 @@ class LoginViewModel : ViewModel() {
     }
 
     fun validateFields(): Boolean {
-        val email = _uiState.value.email
-        val password = _uiState.value.password
-        var isValid = true
+        val state = _uiState.value
 
-        if(email.isEmpty()) {
-            _uiState.update { it.copy(emailError = "Campo obrigatório") }
-            isValid = false
-        }
-        else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _uiState.update {it.copy(emailError = "Email inválido")}
-            isValid = false
-        }
+        val emailResult = Validations.validateEmail(state.email)
+        val passwordResult = Validations.validatePasswordLogin(state.password)
 
-        if(password.isEmpty()) {
-            _uiState.update {it.copy(passwordError = "Campo obrigatório")}
-        }
+        _uiState.update { it.copy(
+            emailError = emailResult,
+            passwordError = passwordResult
+        ) }
 
-        return isValid
+        return emailResult == null && passwordResult == null
     }
 
     fun onLogin() {
@@ -55,11 +48,11 @@ class LoginViewModel : ViewModel() {
 
         viewModelScope.launch {
             delay(2000)
-            _uiState.update { it.copy(isLoading = false, loginSucess = true) }
+            _uiState.update { it.copy(isLoading = false, loginSuccess = true) }
         }
     }
 
     fun onLoginConsumed() {
-        _uiState.update { it.copy(loginSucess = false) }
+        _uiState.update { it.copy(loginSuccess = false) }
     }
 }

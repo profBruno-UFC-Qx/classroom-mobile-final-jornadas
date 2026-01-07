@@ -9,5 +9,5 @@ data class LoginUiState(
 
     val isLoading: Boolean = false,
     val error: String? = null,
-    val loginSucess: Boolean = false
+    val loginSuccess: Boolean = false
 )
