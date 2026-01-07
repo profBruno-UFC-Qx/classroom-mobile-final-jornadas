@@ -1,6 +1,7 @@
 package com.example.jornadas.viewmodels.login
 
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.jornadas.viewmodels.Validations
 import com.google.firebase.Firebase
@@ -50,7 +51,7 @@ class LoginViewModel : ViewModel() {
 
         auth.signInWithEmailAndPassword(state.email, state.password)
             .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
+                if(task.isSuccessful) {
                     _uiState.update { it.copy(isLoading = false, loginSuccess = true) }
                 } else {
                     _uiState.update { it.copy(
@@ -60,6 +61,14 @@ class LoginViewModel : ViewModel() {
                 }
             }
 
+    }
+    fun resetPassword(email: String) {
+        Firebase.auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if(task.isSuccessful) {
+                    Log.d("LoginViewModel", "Email sent.")
+                }
+            }
     }
 
     fun onLoginConsumed() {

@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -44,6 +45,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jornadas.R
 import com.example.jornadas.ui.components.AppTextField
 import com.example.jornadas.ui.components.FilledButton
+import com.example.jornadas.viewmodels.Validations
 import com.example.jornadas.viewmodels.login.LoginViewModel
 
 @Composable
@@ -176,8 +178,77 @@ fun LoginScreen(
                         style = MaterialTheme.typography.labelLarge
                     )
                 }
+                ForgotPasswordButton(
+                    onRecoverClick = { email ->
+                        viewModel.resetPassword(email)
+                    }
+                )
             }
         }
+    }
+}
+@Composable
+fun ForgotPasswordButton(
+    onRecoverClick: (String) -> Unit
+) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    var recoveryEmail by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf<String?>(null) }
+
+    TextButton(
+        onClick = {
+            showDialog = true
+            recoveryEmail = ""
+            emailError = null
+        },
+        modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+    ) {
+        Text("Esqueci minha senha")
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(text = "Recuperar Senha") },
+            text = {
+                Column {
+                    Text("Digite seu email para receber o link.")
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    AppTextField(
+                        value = recoveryEmail,
+                        onValueChange = {
+                            recoveryEmail = it
+                            if (emailError != null) emailError = null
+                        },
+                        label = "Email",
+                        errorMessage = emailError,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val validationResult = Validations.validateEmail(recoveryEmail)
+
+                        if (validationResult == null) {
+                            onRecoverClick(recoveryEmail)
+                            showDialog = false
+                        } else {
+                            emailError = validationResult
+                        }
+                    }
+                ) { Text("Enviar") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }
 
