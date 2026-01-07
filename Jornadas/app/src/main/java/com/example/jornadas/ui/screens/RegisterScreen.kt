@@ -1,5 +1,6 @@
 package com.example.jornadas.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,10 +28,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -55,13 +57,18 @@ fun RegisterScreen(
 
    val uiState by viewModel.uiState.collectAsState()
 
-    var passwordVisible by remember { mutableStateOf(false) }
-    var confirmPasswordVisible by remember { mutableStateOf(false) }
+    var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    var confirmPasswordVisible by rememberSaveable { mutableStateOf(false) }
+
+    val context = LocalContext.current
 
     LaunchedEffect(uiState.registerSuccess) {
         if (uiState.registerSuccess) {
             onRegisterClick()
+            Toast.makeText(context, "Registro concluído", Toast.LENGTH_SHORT).show()
             viewModel.onRegisterConsumed()
+        } else {
+            Toast.makeText(context, uiState.error, Toast.LENGTH_SHORT).show()
         }
     }
 

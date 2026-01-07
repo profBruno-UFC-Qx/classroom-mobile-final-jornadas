@@ -1,14 +1,14 @@
 package com.example.jornadas.viewmodels.register
 
+
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.jornadas.viewmodels.Validations
-import kotlinx.coroutines.delay
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
 
@@ -21,11 +21,11 @@ class RegisterViewModel : ViewModel() {
     }
 
     fun onEmailChange(myEmail: String) {
-        _uiState.update {it.copy(email = myEmail, emailError = null)}
+        _uiState.update { it.copy(email = myEmail, emailError = null) }
     }
 
     fun onPasswordChange(myPassword: String) {
-        _uiState.update {it.copy(password = myPassword, passwordError = null)}
+        _uiState.update { it.copy(password = myPassword, passwordError = null) }
     }
 
     fun onConfirmPasswordChange(myConfirmPassword: String) {
@@ -47,13 +47,14 @@ class RegisterViewModel : ViewModel() {
             state.password, state.confirmPassword
         )
 
-        _uiState.update { it.copy(
-            userError = userResult,
-            emailError = emailResult,
-            passwordError = passwordResult,
-            confirmPasswordError = confirmPasswordResult
-        ) }
-
+        _uiState.update {
+            it.copy(
+                userError = userResult,
+                emailError = emailResult,
+                passwordError = passwordResult,
+                confirmPasswordError = confirmPasswordResult
+            )
+        }
 
         return userResult == null &&
                 emailResult == null &&
@@ -62,16 +63,28 @@ class RegisterViewModel : ViewModel() {
     }
 
     fun onRegister() {
-        if(!validateFields()) {
+        if (!validateFields()) {
             return
         }
 
         _uiState.update { it.copy(isLoading = true) }
 
-        viewModelScope.launch {
-            delay(2000)
-            _uiState.update { it.copy(isLoading = false, registerSuccess = true) }
-        }
+        val state = _uiState.value
+        val auth = Firebase.auth
+
+        auth.createUserWithEmailAndPassword(state.email, state.password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    _uiState.update { it.copy(isLoading = false, registerSuccess = true) }
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            error = task.exception?.message ?: "Erro desconhecido",
+                            isLoading = false
+                        )
+                    }
+                }
+            }
     }
 
     fun onRegisterConsumed() {
