@@ -61,13 +61,19 @@ fun RegisterScreen(
     var confirmPasswordVisible by rememberSaveable { mutableStateOf(false) }
 
     val context = LocalContext.current
+    val concludeString = stringResource(R.string.regis_complete)
+
 
     LaunchedEffect(uiState.registerSuccess) {
         if (uiState.registerSuccess) {
             onRegisterClick()
-            Toast.makeText(context, "Registro concluído", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, concludeString, Toast.LENGTH_SHORT).show()
             viewModel.onRegisterConsumed()
-        } else {
+        }
+    }
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
             Toast.makeText(context, uiState.error, Toast.LENGTH_SHORT).show()
         }
     }

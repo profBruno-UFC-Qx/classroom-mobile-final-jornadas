@@ -1,5 +1,6 @@
 package com.example.jornadas.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -55,11 +57,20 @@ fun LoginScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     var passwordVisible by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val concludeString = stringResource(R.string.login_complete)
 
     LaunchedEffect(uiState.loginSuccess) {
         if (uiState.loginSuccess) {
             onLoginClick()
+            Toast.makeText(context, concludeString, Toast.LENGTH_SHORT).show()
             viewModel.onLoginConsumed()
+        }
+    }
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
+            Toast.makeText(context, uiState.error, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -169,3 +180,4 @@ fun LoginScreen(
         }
     }
 }
+

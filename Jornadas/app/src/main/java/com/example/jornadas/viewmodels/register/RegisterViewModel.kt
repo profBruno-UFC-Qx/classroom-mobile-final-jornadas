@@ -67,7 +67,7 @@ class RegisterViewModel : ViewModel() {
             return
         }
 
-        _uiState.update { it.copy(isLoading = true) }
+        _uiState.update { it.copy(isLoading = true, error = null) }
 
         val state = _uiState.value
         val auth = Firebase.auth

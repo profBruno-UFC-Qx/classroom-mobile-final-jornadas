@@ -2,14 +2,13 @@ package com.example.jornadas.viewmodels.login
 
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.jornadas.viewmodels.Validations
-import kotlinx.coroutines.delay
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -46,10 +45,21 @@ class LoginViewModel : ViewModel() {
 
         _uiState.update { it.copy(isLoading = true, error = null) }
 
-        viewModelScope.launch {
-            delay(2000)
-            _uiState.update { it.copy(isLoading = false, loginSuccess = true) }
-        }
+        val state = _uiState.value
+        val auth = Firebase.auth
+
+        auth.signInWithEmailAndPassword(state.email, state.password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    _uiState.update { it.copy(isLoading = false, loginSuccess = true) }
+                } else {
+                    _uiState.update { it.copy(
+                        error = task.exception?.message ?: "Falha ao fazer login",
+                        isLoading = false
+                    ) }
+                }
+            }
+
     }
 
     fun onLoginConsumed() {
