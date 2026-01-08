@@ -38,10 +38,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     JornadasTheme(darkTheme = true) {
-        Scaffold(topBar = { AppTopBar(true) }, modifier = Modifier.fillMaxSize()) { innerPadding ->
-            JornadasApp(
-                modifier = Modifier.padding(innerPadding)
-            )
-        }
+        JornadasApp()
     }
 }

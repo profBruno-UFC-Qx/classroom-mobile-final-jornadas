@@ -4,11 +4,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -29,7 +33,7 @@ sealed class AppScreens(val route: String) {
     data object MemoryCreation: AppScreens("memoryCreation")
 }
 @Composable
-fun JornadasApp(modifier: Modifier = Modifier) {
+fun JornadasApp() {
 
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -46,7 +50,14 @@ fun JornadasApp(modifier: Modifier = Modifier) {
 
 
     Scaffold(
-        topBar = { if(showTopBar) AppTopBar(isSystemInDarkTheme()) },
+        topBar = {
+            if (showTopBar) AppTopBar(
+                isSystemInDarkTheme(),
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .clip(shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+            )
+        },
         bottomBar = {
             if(showBottomBar) {
                 when(currentRoute) {
