@@ -11,7 +11,6 @@ class Converters {
         return date?.toString()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     @TypeConverter
     fun toDate(dateString: String?): LocalDate? {
         return dateString?.let { LocalDate.parse(it) }

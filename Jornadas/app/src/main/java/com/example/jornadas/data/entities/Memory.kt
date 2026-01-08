@@ -9,6 +9,7 @@ import java.time.LocalDate
 data class Memory(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
+    val userId: String,
     val title: String,
     val description: String,
     val date: LocalDate,
