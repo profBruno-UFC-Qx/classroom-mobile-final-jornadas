@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Jornadas</string>
+    <string name="app_description">Registre e reviva seus momentos especiais</string>
+    <string name="login">ENTRAR</string>
+    <string name="login_option">Já tem uma conta? Entrar</string>
+    <string name="register">CRIAR CONTA</string>
+    <string name="register_option">NÃO TEM UMA CONTA? CRIAR </string>
+    <string name="light_mode">Mudar para o modo claro</string>
+    <string name="dark_mode">Mudar para o modo escuro</string>
+    <string name="no_memories">Nenhuma memória ainda"</string>
+    <string name="no_memories_label">
+        Comece a registrar seus momentos especiais clicando
+        no botão abaixo.
+    </string>
+    <string name="new_memory">Nova memória</string>
+    <string name="select_location">Selecione uma localização</string>
+    <string name="image_btn">ADICIONAR IMAGEM</string>
+    <string name="login_complete">Login concluído</string>
+    <string name="regis_complete">Cadastro concluído</string>
+    <string name="forgot_pass">Esqueceu a senha?</string>
+
+</resources>
