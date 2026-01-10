@@ -4,6 +4,7 @@ package com.example.jornadas.viewmodels.register
 import androidx.lifecycle.ViewModel
 import com.example.jornadas.viewmodels.Validations
 import com.google.firebase.Firebase
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -75,7 +76,21 @@ class RegisterViewModel : ViewModel() {
         auth.createUserWithEmailAndPassword(state.email, state.password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    _uiState.update { it.copy(isLoading = false, registerSuccess = true) }
+                    val user = auth.currentUser
+
+                    val profileUpdates = UserProfileChangeRequest.Builder()
+                        .setDisplayName(state.user)
+                        .build()
+
+                    user?.updateProfile(profileUpdates)
+                        ?.addOnCompleteListener { profileTask ->
+                            if (profileTask.isSuccessful) {
+                                _uiState.update { it.copy(isLoading = false, registerSuccess = true) }
+                            } else {
+                                _uiState.update { it.copy(isLoading = false, registerSuccess = true) }
+                            }
+                        }
+
                 } else {
                     _uiState.update {
                         it.copy(

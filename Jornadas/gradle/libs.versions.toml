@@ -15,6 +15,7 @@ kotlinxSerializationCore = "1.7.3"
 navigationCompose = "2.8.5"
 navigationComposeVersion = "2.9.6"
 firebaseAuthKtx = "24.0.1"
+coil = "2.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,6 +38,7 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationCore" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationComposeVersion" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

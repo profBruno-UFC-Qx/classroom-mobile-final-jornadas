@@ -14,5 +14,5 @@ data class Memory(
     val description: String,
     val date: LocalDate,
     val location: String,
-    @DrawableRes val imageRes: Int
+    val imageUri: String? = null
 )

@@ -3,12 +3,15 @@ package com.example.jornadas.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Map
@@ -16,45 +19,65 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jornadas.R
+import com.example.jornadas.ui.components.CardMemory
 import com.example.jornadas.ui.components.HomeButton
-
-var memories = 0
-
+import com.example.jornadas.viewmodels.AppViewModelProvider
+import com.example.jornadas.viewmodels.home.HomeViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+) {
+
+    val uiState = viewModel.homeUiState.collectAsState()
+
+    val username = Firebase.auth.currentUser?.displayName ?: "Usuári"
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxSize()
     ) {
-        UserInfo()
+        UserInfo(username, memoryCount = uiState.value.memoryList.size)
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        if(memories == 0) NoMemories()
+        if(uiState.value.memoryList.size == 0) {
+            NoMemories()
+        } else {
+            LazyColumn(contentPadding = PaddingValues(bottom = 100.dp)) {
+                items(items = uiState.value.memoryList, key = { it.id }) { memory ->
+                    CardMemory(memory = memory)
+                }
+            }
+        }
     }
 }
 
 @Composable
-fun UserInfo(modifier: Modifier = Modifier) {
+fun UserInfo(username: String, memoryCount: Int, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(30.dp)
     ) {
         Text(
-            text = "Olá, Usuário!",
+            text = "Olá, $username!",
             style = MaterialTheme.typography.labelMedium
         )
         Text(
-            text = "$memories memórias criadas",
+            text = "Você tem $memoryCount memórias criadas",
             style = MaterialTheme.typography.labelSmall
         )
     }
