@@ -1,10 +1,7 @@
 package com.example.jornadas.viewmodels.memorycreation
 
-import android.service.autofill.CustomDescription
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.room.util.copy
 import com.example.jornadas.data.entities.Memory
 import com.example.jornadas.data.repository.MemoryRepository
 import com.google.firebase.Firebase
@@ -39,7 +36,7 @@ class MemoryViewModel(private val repository: MemoryRepository): ViewModel() {
         _uiState.update { it.copy(location = myLocation) }
     }
 
-    fun onImageUriChange(myImageUri: String) {
+    fun onImageUriChange(myImageUri: String?) {
         _uiState.update { it.copy(imageUri = myImageUri) }
     }
 

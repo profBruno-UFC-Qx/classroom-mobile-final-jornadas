@@ -2,6 +2,7 @@ package com.example.jornadas.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -50,9 +51,10 @@ fun CardMemory(
                 contentDescription = "imagem da memória",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(240.dp)
                     .clip(RoundedCornerShape(12.dp)),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.TopCenter
             )
             Text(
                 text = memory.title,
@@ -91,6 +93,7 @@ fun CardMemory(
             )
         }
     }
+    Spacer(modifier = Modifier.height(16.dp))
 }
 
 

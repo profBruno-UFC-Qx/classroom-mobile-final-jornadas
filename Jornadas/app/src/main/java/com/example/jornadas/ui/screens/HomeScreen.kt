@@ -43,7 +43,7 @@ fun HomeScreen(
 
     val uiState = viewModel.homeUiState.collectAsState()
 
-    val username = Firebase.auth.currentUser?.displayName ?: "Usuári"
+    val username = Firebase.auth.currentUser?.displayName ?: "Usuário"
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -53,7 +53,7 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        if(uiState.value.memoryList.size == 0) {
+        if(uiState.value.memoryList.isEmpty()) {
             NoMemories()
         } else {
             LazyColumn(contentPadding = PaddingValues(bottom = 100.dp)) {
