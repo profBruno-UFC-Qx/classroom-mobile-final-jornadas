@@ -21,7 +21,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.JornadasTheme
 import com.example.jornadas.ui.components.AppTopBar
-import com.example.jornadas.ui.components.OptionsBottomBar
 import com.example.jornadas.ui.screens.HomeBottomBar
 import com.example.jornadas.ui.screens.HomeScreen
 import com.example.jornadas.ui.screens.LoginScreen
@@ -53,7 +52,7 @@ fun JornadasApp() {
             else -> true
         }
         val showBottomBar = when(currentRoute) {
-            AppScreens.Home.route, AppScreens.MemoryCreation.route -> true
+            AppScreens.Home.route -> true
             else -> false
         }
 
@@ -76,21 +75,11 @@ fun JornadasApp() {
             },
             bottomBar = {
                 if(showBottomBar) {
-                    when(currentRoute) {
-                        AppScreens.Home.route -> { HomeBottomBar(
-                            onMapClick = { navController.navigate(AppScreens.Map.route) },
-                            createMemory = { navController.navigate(AppScreens.MemoryCreation.route) }
-                        )}
-                        AppScreens.MemoryCreation.route -> {
-                            OptionsBottomBar(
-                                onCreateClick = {  },
-                                text = "Criar",
-                            )
-                        }
-                    }
-
+                    HomeBottomBar(
+                        onMapClick = { navController.navigate(AppScreens.Map.route) },
+                        createMemory = { navController.navigate(AppScreens.MemoryCreation.route) }
+                    )
                 }
-
             },
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.background)
