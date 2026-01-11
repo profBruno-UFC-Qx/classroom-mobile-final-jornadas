@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jornadas.R
+import com.example.jornadas.data.entities.Memory
 import com.example.jornadas.ui.components.CardMemory
 import com.example.jornadas.ui.components.HomeButton
 import com.example.jornadas.viewmodels.AppViewModelProvider
@@ -38,7 +39,8 @@ import com.google.firebase.auth.auth
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    onEditMemory: (Memory) -> Unit = {},
 ) {
 
     val uiState = viewModel.homeUiState.collectAsState()
@@ -58,7 +60,11 @@ fun HomeScreen(
         } else {
             LazyColumn(contentPadding = PaddingValues(bottom = 100.dp)) {
                 items(items = uiState.value.memoryList, key = { it.id }) { memory ->
-                    CardMemory(memory = memory)
+                    CardMemory(
+                        memory = memory,
+                        onEdit = onEditMemory,
+                        onDelete = { viewModel.deleteMemory(memory) }
+                    )
                 }
             }
         }

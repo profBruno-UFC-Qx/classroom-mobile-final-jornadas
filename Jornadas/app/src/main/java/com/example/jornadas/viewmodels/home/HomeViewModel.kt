@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 data class HomeUiState(val memoryList: List<Memory> = listOf())
 
@@ -23,4 +24,10 @@ class HomeViewModel(private val repository: MemoryRepository): ViewModel() {
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = HomeUiState()
         )
+
+    fun deleteMemory(memory: Memory) {
+        viewModelScope.launch {
+            repository.deleteMemoru(memory)
+        }
+    }
 }

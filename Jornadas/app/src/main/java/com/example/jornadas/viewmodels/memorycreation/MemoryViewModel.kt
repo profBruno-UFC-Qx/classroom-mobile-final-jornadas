@@ -20,6 +20,8 @@ class MemoryViewModel(private val repository: MemoryRepository): ViewModel() {
 
     val uiState: StateFlow<MemoryUiState> = _uiState.asStateFlow()
 
+    private var currentMemoryId: String = ""
+
     fun onTitleChange(myTitle: String) {
         _uiState.update { it.copy(title = myTitle) }
     }
@@ -65,5 +67,47 @@ class MemoryViewModel(private val repository: MemoryRepository): ViewModel() {
             _uiState.update { it.copy(isSaved = true) }
         }
 
+    }
+    fun loadMemory(memoryId: String) {
+        currentMemoryId = memoryId
+        viewModelScope.launch {
+            val memory = repository.getMemory(memoryId.toInt())
+            memory?.let { mem ->
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        title = mem.title,
+                        description = mem.description,
+                        date = mem.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                        location = mem.location,
+                        imageUri = mem.imageUri
+                    )
+                }
+            }
+        }
+    }
+
+    fun updateMemory() {
+        val state = _uiState.value
+        val userId = Firebase.auth.currentUser?.uid ?: return
+
+        val finalDate = try {
+            LocalDate.parse(state.date, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        } catch(e: Exception) {
+            LocalDate.now()
+        }
+
+        val updatedMemory = Memory(
+            id = currentMemoryId.toInt(),
+            userId = userId,
+            title = state.title,
+            description = state.description,
+            date = finalDate,
+            location = state.location,
+            imageUri = state.imageUri
+        )
+
+        viewModelScope.launch {
+            repository.updateMemory(updatedMemory)
+        }
     }
 }

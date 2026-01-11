@@ -1,5 +1,7 @@
 package com.example.jornadas
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,10 +17,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.compose.JornadasTheme
 import com.example.jornadas.ui.components.AppTopBar
 import com.example.jornadas.ui.screens.HomeBottomBar
@@ -35,7 +39,10 @@ sealed class AppScreens(val route: String) {
     data object Home: AppScreens("home")
     data object Map: AppScreens("map")
     data object MemoryCreation: AppScreens("memoryCreation")
+
+    data object EditMemory : AppScreens("editMemory")
 }
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun JornadasApp() {
 
@@ -117,10 +124,21 @@ fun JornadasApp() {
                     )
                 }
                 composable(route = AppScreens.Home.route) {
-                    HomeScreen()
+                    HomeScreen(
+                        onEditMemory = { memory ->
+                            navController.navigate("${AppScreens.MemoryCreation.route}?memoryId=${memory.id}")
+                        }
+                    )
                 }
-                composable(route = AppScreens.MemoryCreation.route) {
-                    MemoryCreation(cancel = { navController.popBackStack() })
+                composable(
+                    route = "${AppScreens.MemoryCreation.route}?memoryId={memoryId}",
+                    arguments = listOf(navArgument("memoryId") { type = NavType.StringType; nullable = true; defaultValue = null })
+                ) { backStackEntry ->
+                    val memoryId = backStackEntry.arguments?.getString("memoryId")
+                    MemoryCreation(
+                        cancel = { navController.popBackStack() },
+                        memoryId = memoryId
+                    )
                 }
             }
         }

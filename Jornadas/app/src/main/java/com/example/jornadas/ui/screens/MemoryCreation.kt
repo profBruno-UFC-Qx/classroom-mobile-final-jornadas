@@ -31,11 +31,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,6 +59,7 @@ import com.example.jornadas.viewmodels.memorycreation.MemoryViewModel
 fun MemoryCreation(
     cancel: () -> Unit,
     modifier: Modifier = Modifier,
+    memoryId: String? = null,
     viewModel: MemoryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
 
@@ -66,7 +67,20 @@ fun MemoryCreation(
     val context = LocalContext.current
     val scrollState = rememberScrollState()
 
-    var imageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val isEditMode = memoryId != null
+
+    LaunchedEffect(memoryId) {
+        if (memoryId != null) {
+            viewModel.loadMemory(memoryId)
+        }
+    }
+
+    LaunchedEffect(uiState.imageUri) {
+        if (uiState.imageUri?.isNotEmpty() == true) {
+            imageUri = Uri.parse(uiState.imageUri)
+        }
+    }
 
     val galleryLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -94,10 +108,14 @@ fun MemoryCreation(
         bottomBar = {
             OptionsBottomBar(
                 onCreateClick = {
-                    viewModel.saveMemory()
+                    if(isEditMode) {
+                        viewModel.updateMemory()
+                    } else {
+                        viewModel.saveMemory()
+                    }
                     cancel()
                 },
-                text = "Criar"
+                text = if(isEditMode) "Salvar" else "Criar"
             )
         }
     ) { paddingValues ->
