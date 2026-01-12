@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -102,8 +103,13 @@ fun MemoryCreation(
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val isEditMode = memoryId != null
 
+    var dadosCarregados by rememberSaveable { mutableStateOf(false) }
+
     LaunchedEffect(memoryId) {
-        if (memoryId != null) viewModel.loadMemory(memoryId)
+        if (memoryId != null && !dadosCarregados) {
+            viewModel.loadMemory(memoryId)
+            dadosCarregados = true
+        }
     }
 
     LaunchedEffect(uiState.imageUri) {
@@ -261,7 +267,12 @@ private suspend fun getDeviceLocation(context: Context): String? {
 
             if (!addresses.isNullOrEmpty()) {
                 val address = addresses[0]
-                "${address.thoroughfare ?: "Rua desconhecida"}, ${address.subLocality ?: ""}"
+                val rua = address.thoroughfare ?: "Rua sem nome"
+                val bairro = address.subLocality ?: ""
+                val cidade = address.locality ?: address.subAdminArea ?: ""
+                val estado = address.adminArea ?: ""
+
+                "$rua, $bairro, $cidade - $estado"
             } else {
                 "${location.latitude}, ${location.longitude}"
             }

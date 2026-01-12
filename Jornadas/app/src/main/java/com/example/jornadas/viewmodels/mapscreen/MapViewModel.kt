@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Locale
 
 
@@ -18,37 +19,47 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(MapUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val geocoder by lazy {
-        Geocoder(getApplication(), Locale.getDefault())
-    }
-
-    fun selectLocation(location: LatLng) {
+    fun selectLocation(latLng: LatLng) {
         _uiState.value = _uiState.value.copy(
-            selectedLocation = location,
-            isLoadingAddress = true,
-            selectedAddress = "Buscando endereço..."
+            selectedLocation = latLng,
+            isLoadingAddress = true
         )
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+                val geocoder = Geocoder(getApplication(), Locale.getDefault())
 
-                val addressText = if (!addresses.isNullOrEmpty()) {
+                val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+
+                val enderecoFormatado = if (!addresses.isNullOrEmpty()) {
                     val address = addresses[0]
-                    "${address.thoroughfare ?: "Rua sem nome"}, ${address.subLocality ?: ""}"
+
+                    val rua = address.thoroughfare ?: "Local sem rua"
+                    val bairro = address.subLocality ?: ""
+
+                    val cidade = address.locality ?: address.subAdminArea ?: ""
+                    val estado = address.adminArea ?: ""
+
+                    "$rua, $bairro, $cidade - $estado"
                 } else {
-                    "Endereço não encontrado"
+                    "${latLng.latitude}, ${latLng.longitude}"
                 }
 
-                _uiState.value = _uiState.value.copy(
-                    selectedAddress = addressText,
-                    isLoadingAddress = false
-                )
+                withContext(Dispatchers.Main) {
+                    _uiState.value = _uiState.value.copy(
+                        selectedAddress = enderecoFormatado,
+                        isLoadingAddress = false
+                    )
+                }
+
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    selectedAddress = "Erro ao carregar endereço",
-                    isLoadingAddress = false
-                )
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    _uiState.value = _uiState.value.copy(
+                        selectedAddress = "Erro ao buscar endereço",
+                        isLoadingAddress = false
+                    )
+                }
             }
         }
     }

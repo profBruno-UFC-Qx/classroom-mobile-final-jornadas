@@ -1,5 +1,6 @@
 package com.example.jornadas.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -22,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +41,9 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.jornadas.R
 import com.example.jornadas.data.entities.Memory
+import com.example.jornadas.network.WeatherClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -151,6 +157,35 @@ fun MemoryDetailDialog(
     memory: Memory,
     onDismiss: () -> Unit
 ) {
+    var currentTemp by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(memory.location) {
+        withContext(Dispatchers.IO) {
+            try {
+                val nomeCidadeLimpo = extrairCidade(memory.location)
+
+                Log.d("CLIMA_DEBUG", "Original: ${memory.location}")
+                Log.d("CLIMA_DEBUG", "Tentando buscar por: $nomeCidadeLimpo")
+
+                val geoResponse = WeatherClient.api.getCoordinates(cityName = nomeCidadeLimpo)
+                val locationData = geoResponse.results?.firstOrNull()
+
+                if (locationData != null) {
+                    val weatherResponse = WeatherClient.api.getWeather(
+                        lat = locationData.latitude,
+                        lng = locationData.longitude
+                    )
+                    currentTemp = "${weatherResponse.current_weather.temperature}°C"
+                } else {
+                    currentTemp = "Local não encontrado ($nomeCidadeLimpo)"
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                currentTemp = "Erro"
+            }
+        }
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false),
@@ -204,6 +239,25 @@ fun MemoryDetailDialog(
                     )
                 }
 
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) {
+
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = "Temperatura",
+                        modifier = Modifier.size(20.dp),
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
+                    Text(
+                        // Se for null mostra "Carregando...", senão mostra o valor
+                        text = currentTemp ?: "Carregando clima...",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+
                 Text(
                     text = "Data: ${memory.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}",
                     style = MaterialTheme.typography.bodyMedium
@@ -216,4 +270,17 @@ fun MemoryDetailDialog(
             }
         }
     )
+}
+
+fun extrairCidade(enderecoCompleto: String): String {
+    return try {
+        val semEstado = enderecoCompleto.substringBeforeLast("-")
+
+        val apenasCidade = semEstado.substringAfterLast(",")
+
+        apenasCidade.trim()
+
+    } catch (e: Exception) {
+        enderecoCompleto
+    }
 }

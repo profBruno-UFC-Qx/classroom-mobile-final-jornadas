@@ -111,6 +111,8 @@ class MemoryViewModel(private val repository: MemoryRepository): ViewModel() {
             description = state.description,
             date = finalDate,
             location = state.location,
+            latitude = state.latitude,
+            longitude = state.longitude,
             imageUri = state.imageUri
         )
 
