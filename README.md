@@ -18,14 +18,14 @@ O público-alvo são pessoas que gostam de explorar novos lugares, sejam viajant
 
 ## Funcionalidades Principais
 
-- [ ] Cadastro de momentos: O usuário pode criar um registro com título, descrição, data e imagem opcional.
-- [ ] Registro de localização: Localização automática(via GPS) para registros em tempo real ou o usuário pode escolher um ponto no mapa ou buscar um local pelo nome, para registrar memórias de lugares visitados anteriormente.
+- [ X ] Cadastro de momentos: O usuário pode criar um registro com título, descrição, data e imagem opcional.
+- [ X ] Registro de localização: Localização automática(via GPS) para registros em tempo real ou o usuário pode escolher um ponto no mapa ou buscar um local pelo nome, para registrar memórias de lugares visitados anteriormente.
 - [ ] Mapa de memórias: Exibição de todos os momentos marcados em um mapa interativo.
-- [ ] Edição e exclusão de registros: O usuário pode apagar ou atualizar momentos salvos.
-- [ ] Persistência local: Os dados são armazenados localmente utilizando Room.
-- [ ] Integração com API externa: Busca de informaçãoes sobre o local visitado como temperatura atual.
-- [ ] Tema dinâmico: Suporte a modo claro e escuro com MaterialTheme.
-- [ ] Integração com câmera e galeria: O usuário pode adicionar uma foto tirada na hora ou da galeria.
+- [ X ] Edição e exclusão de registros: O usuário pode apagar ou atualizar momentos salvos.
+- [ X ] Persistência local: Os dados são armazenados localmente utilizando Room.
+- [ X ] Integração com API externa: Busca de informaçãoes sobre o local visitado como temperatura atual.
+- [ X ] Tema dinâmico: Suporte a modo claro e escuro com MaterialTheme.
+- [ X ] Integração com câmera e galeria: O usuário pode adicionar uma foto tirada na hora ou da galeria.
 
 ---
 
