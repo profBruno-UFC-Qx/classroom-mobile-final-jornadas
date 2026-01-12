@@ -38,6 +38,10 @@ class MemoryViewModel(private val repository: MemoryRepository): ViewModel() {
         _uiState.update { it.copy(location = myLocation) }
     }
 
+    fun onLatLongChange(lat: Double, long: Double) {
+        _uiState.update { it.copy(latitude = lat, longitude = long) }
+    }
+
     fun onImageUriChange(myImageUri: String?) {
         _uiState.update { it.copy(imageUri = myImageUri) }
     }
@@ -59,6 +63,8 @@ class MemoryViewModel(private val repository: MemoryRepository): ViewModel() {
             description = state.description,
             date = finalDate,
             location = state.location.ifEmpty { "Localização não informada" },
+            latitude = state.latitude,
+            longitude = state.longitude,
             imageUri = state.imageUri
         )
 
@@ -79,6 +85,8 @@ class MemoryViewModel(private val repository: MemoryRepository): ViewModel() {
                         description = mem.description,
                         date = mem.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                         location = mem.location,
+                        latitude = mem.latitude,
+                        longitude = mem.longitude,
                         imageUri = mem.imageUri
                     )
                 }
