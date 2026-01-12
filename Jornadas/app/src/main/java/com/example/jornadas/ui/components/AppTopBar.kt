@@ -1,0 +1,88 @@
+package com.example.jornadas.ui.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.example.jornadas.R
+
+@Composable
+fun AppTopBar(
+    modifier: Modifier = Modifier,
+    isDarkMode: Boolean,
+    onThemeChange: () -> Unit,
+    onSignOut: () -> Unit
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.surface)
+            .fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.jornadas_logo),
+                contentDescription = "logo do app jornadas",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(48.dp)
+            )
+
+            Text(
+                stringResource(R.string.app_name),
+                style = MaterialTheme.typography.headlineMedium
+            )
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            IconButton(
+                onClick = onThemeChange
+            ) {
+                if (isDarkMode) {
+                    Icon(
+                        imageVector = Icons.Default.LightMode,
+                        contentDescription = stringResource(R.string.light_mode),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.DarkMode,
+                        contentDescription = stringResource(R.string.dark_mode),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+            IconButton(
+                onClick = onSignOut
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Logout,
+                    contentDescription = "Sair da conta",
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        }
+    }
+}
+
