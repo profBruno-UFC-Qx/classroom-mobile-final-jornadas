@@ -123,7 +123,7 @@ fun HomeBottomBar(onMapClick: () -> Unit = {}, createMemory: () -> Unit = {}) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 25.dp, vertical = 60.dp)
+            .padding(start = 25.dp, end = 25.dp, bottom = 60.dp, top = 20.dp)
             .fillMaxWidth()
     ) {
         HomeButton(onclick = onMapClick, icon = Icons.Default.Map, description = "Mapa Interativo")

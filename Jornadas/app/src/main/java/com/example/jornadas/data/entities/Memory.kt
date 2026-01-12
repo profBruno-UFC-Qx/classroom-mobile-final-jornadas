@@ -13,5 +13,7 @@ data class Memory(
     val description: String,
     val date: LocalDate,
     val location: String,
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0,
     val imageUri: String? = null
 )

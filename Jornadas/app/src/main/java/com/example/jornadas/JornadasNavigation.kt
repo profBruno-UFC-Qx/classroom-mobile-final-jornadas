@@ -28,6 +28,7 @@ import com.example.jornadas.ui.components.AppTopBar
 import com.example.jornadas.ui.screens.HomeBottomBar
 import com.example.jornadas.ui.screens.HomeScreen
 import com.example.jornadas.ui.screens.LoginScreen
+import com.example.jornadas.ui.screens.MapScreen
 import com.example.jornadas.ui.screens.MemoryCreation
 import com.example.jornadas.ui.screens.RegisterScreen
 import com.google.firebase.Firebase
@@ -38,6 +39,8 @@ sealed class AppScreens(val route: String) {
     data object Register: AppScreens("register")
     data object Home: AppScreens("home")
     data object Map: AppScreens("map")
+
+    data object InterativeMap: AppScreens("interativeMap")
     data object MemoryCreation: AppScreens("memoryCreation")
 
     data object EditMemory : AppScreens("editMemory")
@@ -55,8 +58,8 @@ fun JornadasApp() {
         val currentRoute = navBackStackEntry?.destination?.route
 
         val showTopBar = when (currentRoute) {
-            AppScreens.Login.route, AppScreens.Register.route, AppScreens.MemoryCreation.route -> false
-            else -> true
+            AppScreens.Home.route -> true
+            else -> false
         }
         val showBottomBar = when(currentRoute) {
             AppScreens.Home.route -> true
@@ -83,7 +86,7 @@ fun JornadasApp() {
             bottomBar = {
                 if(showBottomBar) {
                     HomeBottomBar(
-                        onMapClick = { navController.navigate(AppScreens.Map.route) },
+                        onMapClick = { navController.navigate(AppScreens.InterativeMap.route) },
                         createMemory = { navController.navigate(AppScreens.MemoryCreation.route) }
                     )
                 }
@@ -136,8 +139,23 @@ fun JornadasApp() {
                 ) { backStackEntry ->
                     val memoryId = backStackEntry.arguments?.getString("memoryId")
                     MemoryCreation(
+                        navController = navController,
                         cancel = { navController.popBackStack() },
+                        openMap = { navController.navigate(AppScreens.Map.route) },
                         memoryId = memoryId
+                    )
+                }
+                composable(route = AppScreens.Map.route) {
+                    MapScreen(
+                        onBackClick = {
+                            navController.popBackStack()
+                        },
+                        onConfirmLocation = { endereco ->
+                            navController.previousBackStackEntry
+                                ?.savedStateHandle
+                                ?.set("location_address", endereco)
+                            navController.popBackStack()
+                        }
                     )
                 }
             }
